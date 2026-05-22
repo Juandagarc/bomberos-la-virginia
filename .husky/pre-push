@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+# Block pushes to main unless doctor reports 0 issues.
+# Reads stdin per `git push` protocol: <local-ref> <local-sha> <remote-ref> <remote-sha>
+
+protected_branch="refs/heads/main"
+pushing_to_main=0
+
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  case "$remote_ref" in
+    "$protected_branch"|refs/heads/master)
+      pushing_to_main=1
+      ;;
+  esac
+done
+
+if [ "$pushing_to_main" -eq 1 ]; then
+  echo "▸ push detectado a main — corriendo react doctor…"
+  if ! pnpm doctor; then
+    echo ""
+    echo "✗ doctor reportó issues. push a main bloqueado."
+    echo "  arregla los issues y vuelve a intentarlo, o pushea a otra rama."
+    exit 1
+  fi
+  echo "✓ doctor limpio. push permitido."
+fi
+
+exit 0
