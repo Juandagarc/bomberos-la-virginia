@@ -1,6 +1,27 @@
 // Remaining content sections: Cronica, Operaciones, Tripulacion, Instagram, Unete, Footer.
 // Kept in one file to limit file fragmentation while staying readable.
 
+import igFeedRaw from '../data/ig-feed.json';
+
+type IgPost = {
+  id: string;
+  date: string | null;
+  caption: { plain?: string | null; em?: string | null; tail?: string | null };
+  meta: string[];
+  photoClass: string;
+  img: string | null;
+  href: string | null;
+  size?: 'lg' | 'w' | null;
+  video?: boolean | null;
+};
+
+const igFeed = igFeedRaw as {
+  posts: IgPost[];
+  lastSync: string | null;
+  followerCount: string;
+  postCount: string;
+};
+
 type CrewMember = {
   num: string;
   year: string;
@@ -13,6 +34,60 @@ type CrewMember = {
   stat2: { v: string; l: string; red?: boolean };
   sign: string;
 };
+
+const CREW_ICONS = {
+  comte: (
+    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M24 6l2.6 8H35l-6.8 5 2.6 8L24 22.6 17.2 27l2.6-8L13 14h8.4Z"/>
+      <path d="M10 34h28"/>
+      <path d="M14 40h20"/>
+    </svg>
+  ),
+  subte: (
+    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="24" cy="10" r="5"/>
+      <path d="M24 15v12M16 22l8 5 8-5"/>
+      <path d="M19 31l5 13M29 31l-5 13"/>
+      <path d="M34 16c4 2 6 6 6 10"/>
+      <path d="M14 16c-4 2-6 6-6 10"/>
+    </svg>
+  ),
+  médico: (
+    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <rect x="20" y="8" width="8" height="32" rx="2"/>
+      <rect x="8" y="20" width="32" height="8" rx="2"/>
+    </svg>
+  ),
+  acuático: (
+    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 18c4-5 8-5 12 0s8 5 12 0 8-5 12 0"/>
+      <path d="M4 28c4-5 8-5 12 0s8 5 12 0 8-5 12 0"/>
+      <path d="M4 38c4-5 8-5 12 0s8 5 12 0 8-5 12 0"/>
+    </svg>
+  ),
+  'cond.': (
+    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="24" cy="24" r="18"/>
+      <circle cx="24" cy="24" r="5"/>
+      <line x1="24" y1="6" x2="24" y2="19"/>
+      <line x1="24" y1="29" x2="24" y2="42"/>
+      <line x1="6" y1="24" x2="19" y2="24"/>
+      <line x1="29" y1="24" x2="42" y2="24"/>
+    </svg>
+  ),
+  'nov.': (
+    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M24 4c4 10 11 12 11 22a11 11 0 0 1-22 0c0-6 3-10 6-14 1 5 3 7 4 9C22 15 20 10 24 4Z"/>
+    </svg>
+  ),
+  'forest.': (
+    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="24,5 14,22 34,22"/>
+      <polygon points="24,14 10,36 38,36"/>
+      <rect x="21" y="36" width="6" height="7" rx="1"/>
+    </svg>
+  ),
+} as Record<string, React.ReactElement>;
 
 const CREW: CrewMember[] = [
   {
@@ -101,88 +176,6 @@ const CREW: CrewMember[] = [
   },
 ];
 
-type Post = {
-  date: string;
-  caption: { plain?: string; em?: string; tail?: string };
-  meta: string[];
-  photoClass: string;
-  size?: 'lg' | 'w';
-  video?: boolean;
-};
-
-const POSTS: Post[] = [
-  {
-    date: '21 MAY · 21:47',
-    caption: {
-      em: '“Madrugada larga.”',
-      tail: ' Incendio de vegetación en la Vía a Pereira controlado por nuestras unidades. Gracias a la comunidad por reportar a tiempo. ♥',
-    },
-    meta: ['♥ 1.2K', '💬 84', '↗ 23'],
-    photoClass: 'ph-fire',
-    size: 'lg',
-    video: true,
-  },
-  {
-    date: '18 MAY',
-    caption: {
-      plain:
-        'Capacitación de primeros auxilios en la I.E. La Virginia. 60 estudiantes aprendieron RCP.',
-    },
-    meta: ['♥ 487', '💬 21'],
-    photoClass: 'ph-team',
-  },
-  {
-    date: '15 MAY',
-    caption: {
-      plain: 'Rescate de gato en árbol — la Sra. Esperanza nos invitó a tinto. ',
-      em: 'Misión cumplida.',
-    },
-    meta: ['♥ 891', '💬 142'],
-    photoClass: 'ph-rescue',
-  },
-  {
-    date: '12 MAY',
-    caption: {
-      em: 'Día Internacional del Bombero.',
-      tail: ' Gracias a quienes nos paran en la calle a darnos la mano. Esto se hace por ustedes.',
-    },
-    meta: ['♥ 2.1K', '💬 287', '↗ 156'],
-    photoClass: 'ph-day',
-    size: 'w',
-  },
-  {
-    date: '08 MAY',
-    caption: { plain: 'Simulacro de rescate fluvial · río Risaralda. Junto con Defensa Civil.' },
-    meta: ['♥ 654', '💬 31'],
-    photoClass: 'ph-river',
-    video: true,
-  },
-  {
-    date: '04 MAY',
-    caption: {
-      plain: 'M-01 lista. Mantenimiento mensual completado. Bomba a punto, mangueras revisadas.',
-    },
-    meta: ['♥ 412', '💬 18'],
-    photoClass: 'ph-truck',
-  },
-  {
-    date: '28 ABR',
-    caption: {
-      plain: 'Día abierto en la estación. Más de 200 niños conocieron de cerca el equipo. ',
-      em: 'Los próximos voluntarios.',
-    },
-    meta: ['♥ 1.4K', '💬 89'],
-    photoClass: 'ph-warm',
-  },
-  {
-    date: '22 ABR',
-    caption: {
-      plain: 'Manejo de enjambre — reubicado en zona segura. No matamos abejas, las salvamos.',
-    },
-    meta: ['♥ 798', '💬 47'],
-    photoClass: 'ph-bee',
-  },
-];
 
 const OPS = [
   {
@@ -315,29 +308,53 @@ export function Cronica() {
           <div className="polaroid-stack">
             <div className="polaroid polaroid--1" data-rot="-6">
               <div className="polaroid__tape"></div>
-              <div className="polaroid__photo ph-station">
-                <div className="img-frame">Estación · 1972</div>
+              <div
+                className="polaroid__photo"
+                style={{
+                  backgroundImage:
+                    'linear-gradient(180deg,transparent 55%,rgba(0,0,0,0.55) 100%), url(/ig/07-DCzA9z3xPxN.jpg)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              >
+                <div className="img-frame">Festival del Puerto · La Virginia</div>
               </div>
               <div className="polaroid__caption">
-                La primera estación, esquina Cra. 6<small>Archivo CBV · 1972</small>
+                CBV presente en las fiestas del municipio<small>Unidades de guardia</small>
               </div>
             </div>
             <div className="polaroid polaroid--2" data-rot="5">
               <div className="polaroid__tape"></div>
-              <div className="polaroid__photo ph-helmet">
-                <div className="img-frame">Casco · MSA Cairns 1010</div>
+              <div
+                className="polaroid__photo"
+                style={{
+                  backgroundImage:
+                    'linear-gradient(180deg,transparent 55%,rgba(0,0,0,0.55) 100%), url(/ig/03-DGnk878R6Pb.jpg)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center top',
+                }}
+              >
+                <div className="img-frame">Gestión institucional · DNBC</div>
               </div>
               <div className="polaroid__caption">
-                Casco del Cabo Rendón, 1989<small>Donado por la familia</small>
+                Comandancia ante la Dirección Nacional<small>Carnetización Nacional</small>
               </div>
             </div>
             <div className="polaroid polaroid--3" data-rot="-3">
               <div className="polaroid__tape"></div>
-              <div className="polaroid__photo ph-truck">
-                <div className="img-frame">M-01 · 2018</div>
+              <div
+                className="polaroid__photo"
+                style={{
+                  backgroundImage:
+                    'linear-gradient(180deg,transparent 55%,rgba(0,0,0,0.55) 100%), url(/ig/08-DCPDHFipgdk.jpg)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              >
+                <div className="img-frame">CBV La Virginia · Est. 1963</div>
               </div>
               <div className="polaroid__caption">
-                Máquina M-01, día del estreno<small>23 marzo 2018</small>
+                Cuerpo de Bomberos Voluntarios<small>Valor · Abnegación · Disciplina</small>
               </div>
             </div>
           </div>
@@ -433,7 +450,7 @@ export function Tripulacion() {
             </div>
             <div className={`cromo__photo ${m.photoClass}`}>
               <div className="cromo__badge">{m.badge}</div>
-              <div className="silhouette">{m.silhouette}</div>
+              <div className="silhouette">{CREW_ICONS[m.silhouette] ?? null}</div>
             </div>
             <h3 className="cromo__name">{m.name}</h3>
             <div className="cromo__role">{m.role}</div>
@@ -491,23 +508,46 @@ export function Instagram() {
           >
             @cuerpodebomberoslavirginia
           </a>
-          <small>14.2K seguidores · 847 publicaciones</small>
+          <small>
+            {igFeed.followerCount} seguidores · {igFeed.postCount} publicaciones
+          </small>
         </div>
       </div>
 
       <div className="ig__grid reveal-stagger">
-        {POSTS.map((p, i) => (
+        {igFeed.posts.map((p, i) => (
           <article
-            key={i}
+            key={p.id ?? i}
             className={`post${p.size === 'lg' ? ' post--lg' : ''}${p.size === 'w' ? ' post--w' : ''} ${p.photoClass}`}
           >
+            {p.img && (
+              <img
+                src={p.img}
+                alt={p.caption.plain ?? p.caption.em ?? ''}
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+            {p.href && (
+              <a
+                className="post__link"
+                href={p.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Ver en Instagram"
+              />
+            )}
             {p.video ? <div className="post__type">▶</div> : null}
             <div className="post__inner">
-              <span className="post__date">{p.date}</span>
+              {p.date && <span className="post__date">{p.date}</span>}
               <div>
                 <p className="post__caption">
                   {p.caption.em && !p.caption.plain ? <em>{p.caption.em}</em> : null}
-                  {p.caption.plain ? p.caption.plain : null}
+                  {p.caption.plain
+                    ? p.caption.plain
+                    : !p.caption.em && !p.caption.tail
+                      ? '@cuerpodebomberoslavirginia'
+                      : null}
                   {p.caption.em && p.caption.plain ? <em>{p.caption.em}</em> : null}
                   {p.caption.tail ? p.caption.tail : null}
                 </p>
@@ -520,6 +560,39 @@ export function Instagram() {
             </div>
           </article>
         ))}
+
+        {/* CTA card — fills remaining grid cells and links to the full profile */}
+        <a
+          className="post post--w ph-rojo"
+          href="https://www.instagram.com/cuerpodebomberoslavirginia/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <div className="post__inner">
+            <span className="post__date">Instagram</span>
+            <div>
+              <p className="post__caption">
+                <em>Ver todo en Instagram →</em>
+              </p>
+              <p className="post__caption" style={{ marginTop: 6, opacity: 0.75 }}>
+                {igFeed.followerCount} seguidores · {igFeed.postCount} publicaciones
+              </p>
+            </div>
+          </div>
+        </a>
+        <div className="post ph-night">
+          <div className="post__inner">
+            <span className="post__date">Emergencias 24 / 7</span>
+            <div>
+              <p className="post__caption">
+                <em>311 354 82 81</em>
+              </p>
+              <p className="post__caption" style={{ marginTop: 6, opacity: 0.75 }}>
+                Capacitaciones · 304 488 44 32
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -601,6 +674,10 @@ const DISPATCH_ITEMS = [
   { tm: '14:30', code: '10-19', txt: 'Capacitación I.E. La Virginia' },
   { tm: '11:15', code: '10-52', txt: 'APH · Cra. 7 con Cl. 9' },
   { tm: '08:45', code: '10-12', txt: 'Inspección hidrante · z. industrial' },
+  { tm: '07:20', code: '10-8', txt: 'A-02 disponible · base estación' },
+  { tm: '05:58', code: '10-33', txt: 'Enjambre abejas · Barrio La Playa' },
+  { tm: '03:15', code: '10-70', txt: 'Conato eléctrico · Cl. 12 · controlado' },
+  { tm: '01:40', code: '10-4', txt: 'Relevo nocturno · M-01 en base' },
 ];
 
 export function Footer() {
@@ -662,9 +739,6 @@ export function Footer() {
               >
                 @cuerpodebomberoslavirginia →
               </a>
-              <a href="#" style={pillStyle}>
-                Facebook →
-              </a>
             </div>
           </div>
 
@@ -672,18 +746,18 @@ export function Footer() {
             <h5>Estación</h5>
             <ul>
               <li>
-                <a href="#">
+                <span>
                   Cra. 6 · Cl. 9-32<small>La Virginia · Risaralda</small>
-                </a>
+                </span>
               </li>
               <li>
-                <a href="tel:+576987654321">
-                  +57 6 987 65 43<small>Línea fija</small>
+                <a href="tel:+573044884432">
+                  304 488 44 32<small>Capacitaciones</small>
                 </a>
               </li>
               <li>
                 <a href="tel:+573113548281" style={{ color: 'var(--rojo)' }}>
-                  📞 311 354 82 81<small>Emergencia 24/7</small>
+                  311 354 82 81<small>Emergencias 24 / 7</small>
                 </a>
               </li>
             </ul>
@@ -693,16 +767,22 @@ export function Footer() {
             <h5>Comunidad</h5>
             <ul>
               <li>
-                <a href="#">Capacitaciones</a>
+                <a href="#unete">Hazte voluntario</a>
               </li>
               <li>
-                <a href="#">Prevención del fuego</a>
+                <a href="#ops">Operaciones</a>
               </li>
               <li>
-                <a href="#">Día abierto</a>
+                <a href="#tripulacion">La tripulación</a>
               </li>
               <li>
-                <a href="#">Visitas escolares</a>
+                <a
+                  href="https://www.instagram.com/cuerpodebomberoslavirginia/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Instagram
+                </a>
               </li>
             </ul>
           </div>
@@ -714,15 +794,20 @@ export function Footer() {
                 <a href="#unete">Sé voluntario</a>
               </li>
               <li>
-                <a href="#" style={{ color: 'var(--rojo)' }}>
-                  Dona ahora →
+                <a
+                  href="https://www.instagram.com/cuerpodebomberoslavirginia/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--rojo)' }}
+                >
+                  Escríbenos →
                 </a>
               </li>
               <li>
-                <a href="#">Donación recurrente</a>
+                <a href="tel:+573113548281">Emergencia · 311 354 82 81</a>
               </li>
               <li>
-                <a href="#">Transparencia · 2025</a>
+                <a href="tel:+573044884432">Capacitaciones · 304 488 44 32</a>
               </li>
             </ul>
           </div>
@@ -737,9 +822,7 @@ export function Footer() {
           <span className="center">
             Hecho con <span className="heart">♥</span> en La Virginia, Risaralda · Colombia
           </span>
-          <span>
-            Diseño · <a href="#">en casa</a>
-          </span>
+          <span>Hecho en La Virginia</span>
         </div>
       </div>
     </footer>

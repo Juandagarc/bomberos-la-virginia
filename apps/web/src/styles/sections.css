@@ -402,6 +402,7 @@ section { position: relative; }
 .ph-rescue { background: linear-gradient(135deg, #0a2a4a 0%, #1a4a8a 100%); }
 .ph-bee { background: linear-gradient(135deg, #2a2010 0%, #aa8810 100%); }
 .ph-day { background: linear-gradient(180deg, #6a4a2a 0%, #aa7a4a 60%, #d4a070 100%); }
+.ph-rojo { background: var(--rojo); }
 
 @media (max-width: 880px) {
   .cronica__inner { grid-template-columns: 1fr; }

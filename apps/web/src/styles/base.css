@@ -330,15 +330,16 @@ body::before {
   padding-top: 120px;
 }
 
-/* background photo placeholder w/ overlays */
+/* background photo + overlays */
 .hero__photo {
   position: absolute;
   inset: 0;
   z-index: -3;
   background:
-    radial-gradient(ellipse at 30% 40%, rgba(255,107,26,0.18), transparent 55%),
-    radial-gradient(ellipse at 80% 60%, rgba(211,32,39,0.22), transparent 60%),
-    linear-gradient(180deg, #0d0a08 0%, #1a0f08 50%, #0a0808 100%);
+    radial-gradient(ellipse at 30% 40%, rgba(255,107,26,0.22), transparent 55%),
+    radial-gradient(ellipse at 80% 60%, rgba(211,32,39,0.26), transparent 60%),
+    linear-gradient(180deg, rgba(13,10,8,0.84) 0%, rgba(26,15,8,0.58) 45%, rgba(10,8,8,0.88) 100%),
+    url('/ig/05-DC6yH1_R1OY.jpg') center 35% / cover no-repeat;
   transform: scale(1.06);
   will-change: transform;
   animation: kenBurns 14s ease-in-out infinite alternate;
